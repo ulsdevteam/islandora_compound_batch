@@ -42,6 +42,9 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
       $file_name_with_extension = basename($file_path);
       $is_obj_file = $cb_utilities->extInContentModelMap($file_extension);
       if ($fileinfo->isFile() && $is_obj_file) {
+        $parts = explode('/', $file_path);
+        $this->parameters['assign_pid'] = $this->parameters['namespace'] . ':' . $parts[(count($parts) - 2)];
+        $this->parameters['content_models'] = $this->get_model_from_filename($file_name_with_extension);
         $batch_object = new IslandoraCompoundBatchObject($this->connection, $file_path, $this->parameters);
         // Add the instances to the Islandora batch queue.
         $this->addToDatabase($batch_object);
@@ -71,6 +74,15 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
   }
 
   /**
+   * To get the content_models value for the child object based on the filename.
+   *
+   * @param type $filename
+   */
+  public function get_model_from_filename($filename) {
+    return 'islandora:sp_audioCModel';
+  }
+
+  /**
    * Echos statement if icbpVerbose property is true.
    *
    * Set using --icbp_verbose drush option.
@@ -86,7 +98,6 @@ class IslandoraCompoundBatchPreprocessor extends IslandoraBatchPreprocessor {
    */
   public function addStructureData($structure_file_path, $compound_object_pid) {
     static $object_num = 0;
-
     $batch_id = $this->getSetId();
 
     // Object ID is the batch set ID concatenated with the object number.
