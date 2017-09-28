@@ -77,7 +77,7 @@ class Utilies {
    *   FALSE if the mapping doesn't apply.
    */
   public function getContentModelFromParam($fileExt, $map) {
-    list($targetExt, $cmodel) = explode('::', $map);
+    @list($targetExt, $cmodel) = explode('::', $map);
     if (strlen($targetExt)) {
       if ($targetExt == $fileExt) {
         return trim($cmodel);
